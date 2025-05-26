@@ -1,40 +1,89 @@
 #include <stdio.h>
-
-// Desafio Batalha Naval - MateCheck
-// Este código inicial serve como base para o desenvolvimento do sistema de Batalha Naval.
-// Siga os comentários para implementar cada parte do desafio.
+#include <stdbool.h>
 
 int main() {
-    // Nível Novato - Posicionamento dos Navios
-    // Sugestão: Declare uma matriz bidimensional para representar o tabuleiro (Ex: int tabuleiro[5][5];).
-    // Sugestão: Posicione dois navios no tabuleiro, um verticalmente e outro horizontalmente.
-    // Sugestão: Utilize `printf` para exibir as coordenadas de cada parte dos navios.
+    // Tamanho do tabuleiro e dos navios definidos por variáveis constantes
+    const int tamanho_tabuleiro = 10;
+    const int tamanho_navio = 3;
 
-    // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
-    // Sugestão: Expanda o tabuleiro para uma matriz 10x10.
-    // Sugestão: Posicione quatro navios no tabuleiro, incluindo dois na diagonal.
-    // Sugestão: Exiba o tabuleiro completo no console, mostrando 0 para posições vazias e 3 para posições ocupadas.
+    int tabuleiro[10][10] = {0}; // Inicializa todas as posições com 0 (água)
 
-    // Nível Mestre - Habilidades Especiais com Matrizes
-    // Sugestão: Crie matrizes para representar habilidades especiais como cone, cruz, e octaedro.
-    // Sugestão: Utilize estruturas de repetição aninhadas para preencher as áreas afetadas por essas habilidades no tabuleiro.
-    // Sugestão: Exiba o tabuleiro com as áreas afetadas, utilizando 0 para áreas não afetadas e 1 para áreas atingidas.
+    // Coordenadas iniciais dos navios (definidas diretamente no código)
+    int linha_horizontal = 2, coluna_horizontal = 3; // Navio horizontal
+    int linha_vertical = 5, coluna_vertical = 6;     // Navio vertical
 
-    // Exemplos de exibição das habilidades:
-    // Exemplo para habilidade em cone:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 1 1 1 1 1
-    
-    // Exemplo para habilidade em octaedro:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 0 0 1 0 0
+    bool posicoes_validas = true;
 
-    // Exemplo para habilidade em cruz:
-    // 0 0 1 0 0
-    // 1 1 1 1 1
-    // 0 0 1 0 0
+    // Validação dos limites do navio horizontal
+    if (linha_horizontal < 0 || linha_horizontal >= tamanho_tabuleiro ||
+        coluna_horizontal < 0 || (coluna_horizontal + tamanho_navio - 1) >= tamanho_tabuleiro) {
+        printf("Erro: Navio horizontal fora dos limites do tabuleiro\n");
+        posicoes_validas = false;
+    }
+
+    // Validação dos limites do navio vertical
+    if (coluna_vertical < 0 || coluna_vertical >= tamanho_tabuleiro ||
+        linha_vertical < 0 || (linha_vertical + tamanho_navio - 1) >= tamanho_tabuleiro) {
+        printf("Erro: Navio vertical fora dos limites do tabuleiro\n");
+        posicoes_validas = false;
+    }
+
+    // Vetores para guardar as posições ocupadas pelos navios
+    int navio_horizontal[3];
+    int navio_vertical[3];
+
+    if (posicoes_validas) {
+        // Calcula as posições do navio horizontal
+        for (int i = 0; i < tamanho_navio; i++) {
+            navio_horizontal[i] = linha_horizontal * tamanho_tabuleiro + (coluna_horizontal + i);
+        }
+
+        // Calcula as posições do navio vertical
+        for (int i = 0; i < tamanho_navio; i++) {
+            navio_vertical[i] = (linha_vertical + i) * tamanho_tabuleiro + coluna_vertical;
+        }
+
+        // Verifica sobreposição entre os navios
+        for (int i = 0; i < tamanho_navio; i++) {
+            for (int j = 0; j < tamanho_navio; j++) {
+                if (navio_horizontal[i] == navio_vertical[j]) {
+                    printf("Erro: Navios se sobrepõem na posição linha %d, coluna %d\n",
+                           navio_horizontal[i] / tamanho_tabuleiro, navio_horizontal[i] % tamanho_tabuleiro);
+                    posicoes_validas = false;
+                    break;
+                }
+            }
+            if (!posicoes_validas) break;
+        }
+    }
+
+    if (!posicoes_validas) {
+        printf("Ajuste as coordenadas e execute novamente.\n");
+        return 1;
+    }
+
+    // Posiciona o navio horizontal no tabuleiro
+    for (int i = 0; i < tamanho_navio; i++) {
+        int linha = navio_horizontal[i] / tamanho_tabuleiro;
+        int coluna = navio_horizontal[i] % tamanho_tabuleiro;
+        tabuleiro[linha][coluna] = 3;
+    }
+
+    // Posiciona o navio vertical no tabuleiro
+    for (int i = 0; i < tamanho_navio; i++) {
+        int linha = navio_vertical[i] / tamanho_tabuleiro;
+        int coluna = navio_vertical[i] % tamanho_tabuleiro;
+        tabuleiro[linha][coluna] = 3;
+    }
+
+    // Exibe o tabuleiro
+    printf("\nTabuleiro Final:\n");
+    for (int i = 0; i < tamanho_tabuleiro; i++) {
+        for (int j = 0; j < tamanho_tabuleiro; j++) {
+            printf("%d ", tabuleiro[i][j]);
+        }
+        printf("\n");
+    }
 
     return 0;
 }
